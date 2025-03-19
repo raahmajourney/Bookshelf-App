@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("DOMContentLoaded", function() {
       const yearInput = document.getElementById("bookFormYear");
-      const currentYear = new Date().getFullYear(); // Mendapatkan tahun sekarang
-      yearInput.value = currentYear; // Mengisi input dengan tahun sekarang
+      const currentYear = new Date().getFullYear(); 
+      yearInput.value = currentYear; 
   });
   
   
@@ -45,19 +45,28 @@ document.addEventListener("DOMContentLoaded", () => {
     function createBookElement(book) {
       const bookContainer = document.createElement("div");
       bookContainer.dataset.bookid = book.id;
+      bookContainer.setAttribute("data-testid", "bookItem");
+    
       bookContainer.innerHTML = `
-        <h3>${book.title}</h3>
-        <p>Penulis: ${book.author}</p>
-        <p>Tahun: ${book.year}</p>
+        <h3 data-testid="bookItemTitle">${book.title}</h3>
+        <p data-testid="bookItemAuthor">Penulis: ${book.author}</p>
+        <p data-testid="bookItemYear">Tahun: ${book.year}</p>
         <div>
-          <button onclick="toggleBook(${book.id})">${book.isComplete ? "Belum Selesai" : "Selesai"} dibaca</button>
-          <button onclick="deleteBook(${book.id})">Hapus Buku</button>
-          <button onclick="editBook(${book.id})">Edit Buku</button>
+          <button data-testid="bookItemIsCompleteButton" onclick="toggleBook(${book.id})">
+            ${book.isComplete ? "Belum Selesai" : "Selesai"} dibaca
+          </button>
+          <button data-testid="bookItemDeleteButton" onclick="deleteBook(${book.id})">
+            Hapus Buku
+          </button>
+          <button data-testid="bookItemEditButton" onclick="editBook(${book.id})">
+            Edit Buku
+          </button>
         </div>
       `;
       return bookContainer;
     }
-  
+    
+
     window.toggleBook = function(id) {
       let books = getBooks();
       books = books.map(book => {
@@ -74,6 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
       saveBooks(books);
       renderBooks();
     };
+
+    window.deleteBook = function(id) {
+      const confirmation = confirm("Apakah Anda yakin ingin menghapus buku ini?");
+      if (!confirmation) return; 
+      let books = getBooks();
+      books = books.filter(book => book.id !== id);
+      saveBooks(books);
+      renderBooks();
+  };
+  
   
     window.editBook = function(id) {
       let books = getBooks();
